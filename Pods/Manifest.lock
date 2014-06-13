@@ -1,0 +1,15 @@
+PODS:
+  - RSColorPicker (0.9.0)
+
+DEPENDENCIES:
+  - RSColorPicker (from `https://github.com/rsully/rscolorpicker`, tag `v0.9.0`)
+
+EXTERNAL SOURCES:
+  RSColorPicker:
+    :git: https://github.com/rsully/rscolorpicker
+    :tag: v0.9.0
+
+SPEC CHECKSUMS:
+  RSColorPicker: d6537f17bf6b510930757b4fad6561e29a96a5db
+
+COCOAPODS: 0.33.1
