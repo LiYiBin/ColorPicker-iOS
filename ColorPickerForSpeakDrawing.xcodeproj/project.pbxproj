@@ -23,6 +23,7 @@
 		86B7B2A6194B2F10000BFC44 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 86B7B2A4194B2F10000BFC44 /* InfoPlist.strings */; };
 		86B7B2A8194B2F10000BFC44 /* ColorPickerForSpeakDrawingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B2A7194B2F10000BFC44 /* ColorPickerForSpeakDrawingTests.m */; };
 		86B7B2B3194B4073000BFC44 /* PatchCollectionViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B2B2194B4073000BFC44 /* PatchCollectionViewCell.m */; };
+		86B7B345194B5778000BFC44 /* DB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B343194B5778000BFC44 /* DB.xcdatamodeld */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 		86B7B2A7194B2F10000BFC44 /* ColorPickerForSpeakDrawingTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ColorPickerForSpeakDrawingTests.m; sourceTree = "<group>"; };
 		86B7B2B1194B4073000BFC44 /* PatchCollectionViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatchCollectionViewCell.h; sourceTree = "<group>"; };
 		86B7B2B2194B4073000BFC44 /* PatchCollectionViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PatchCollectionViewCell.m; sourceTree = "<group>"; };
+		86B7B344194B5778000BFC44 /* DB.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DB.xcdatamodel; sourceTree = "<group>"; };
 		B293DEFE96FF4222ADAB2827 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		F73E9F91406A4E48ADCBA32F /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -128,6 +130,7 @@
 				86B7B292194B2F10000BFC44 /* MainViewController.m */,
 				86B7B2B4194B4078000BFC44 /* Views */,
 				86B7B294194B2F10000BFC44 /* Images.xcassets */,
+				86B7B343194B5778000BFC44 /* DB.xcdatamodeld */,
 				86B7B283194B2F10000BFC44 /* Supporting Files */,
 			);
 			path = ColorPickerForSpeakDrawing;
@@ -306,6 +309,7 @@
 			files = (
 				86B7B289194B2F10000BFC44 /* main.m in Sources */,
 				86B7B293194B2F10000BFC44 /* MainViewController.m in Sources */,
+				86B7B345194B5778000BFC44 /* DB.xcdatamodeld in Sources */,
 				86B7B28D194B2F10000BFC44 /* MainAppDelegate.m in Sources */,
 				86B7B2B3194B4073000BFC44 /* PatchCollectionViewCell.m in Sources */,
 			);
@@ -528,6 +532,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		86B7B343194B5778000BFC44 /* DB.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				86B7B344194B5778000BFC44 /* DB.xcdatamodel */,
+			);
+			currentVersion = 86B7B344194B5778000BFC44 /* DB.xcdatamodel */;
+			path = DB.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 86B7B271194B2F10000BFC44 /* Project object */;
 }
