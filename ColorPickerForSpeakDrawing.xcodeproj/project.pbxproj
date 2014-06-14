@@ -26,6 +26,7 @@
 		86B7B345194B5778000BFC44 /* DB.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B343194B5778000BFC44 /* DB.xcdatamodeld */; };
 		86B7B34C194B5A99000BFC44 /* ModelsName.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B34B194B5A99000BFC44 /* ModelsName.m */; };
 		86B7B353194BEEE4000BFC44 /* Patch.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B352194BEEE4000BFC44 /* Patch.m */; };
+		86B7B35D194C0CE1000BFC44 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B7B35C194C0CE1000BFC44 /* CoreBluetooth.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -65,6 +66,7 @@
 		86B7B34B194B5A99000BFC44 /* ModelsName.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ModelsName.m; sourceTree = "<group>"; };
 		86B7B351194BEEE4000BFC44 /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Patch.h; sourceTree = "<group>"; };
 		86B7B352194BEEE4000BFC44 /* Patch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Patch.m; sourceTree = "<group>"; };
+		86B7B35C194C0CE1000BFC44 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
 		B293DEFE96FF4222ADAB2827 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		F73E9F91406A4E48ADCBA32F /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -74,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86B7B35D194C0CE1000BFC44 /* CoreBluetooth.framework in Frameworks */,
 				86B7B27F194B2F10000BFC44 /* CoreGraphics.framework in Frameworks */,
 				86B7B281194B2F10000BFC44 /* UIKit.framework in Frameworks */,
 				86B7B27D194B2F10000BFC44 /* Foundation.framework in Frameworks */,
@@ -117,6 +120,7 @@
 		86B7B27B194B2F10000BFC44 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				86B7B35C194C0CE1000BFC44 /* CoreBluetooth.framework */,
 				86B7B27C194B2F10000BFC44 /* Foundation.framework */,
 				86B7B27E194B2F10000BFC44 /* CoreGraphics.framework */,
 				86B7B280194B2F10000BFC44 /* UIKit.framework */,

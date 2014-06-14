@@ -13,33 +13,44 @@
 #import "ModelsName.h"
 
 #import <CoreData/CoreData.h>
+#import <CoreBluetooth/CoreBluetooth.h>
 #import <RSColorPickerView.h>
 
 #define kRed @"Red"
 #define kGreen @"Green"
 #define kBlue @"Blue"
 
-@interface MainViewController () <RSColorPickerViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate>
+#define RBL_SERVICE_UUID "713D0000-503E-4C75-BA94-3148F18D941E"
+#define RBL_CHAR_TX_UUID "713D0002-503E-4C75-BA94-3148F18D941E"
+#define RBL_CHAR_RX_UUID "713D0003-503E-4C75-BA94-3148F18D941E"
+#define RBL_BLE_FRAMEWORK_VER 0x0200
 
+@interface MainViewController () <RSColorPickerViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate, CBCentralManagerDelegate, CBPeripheralDelegate>
+
+// for patch view
 @property (weak, nonatomic) IBOutlet UICollectionView *patchCollectionView;
 
+// for color picker
 @property (weak, nonatomic) IBOutlet RSColorPickerView *colorPickerView;
 @property (weak, nonatomic) IBOutlet UIView *patchView;
 @property (weak, nonatomic) IBOutlet UILabel *redValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *greenValueLabel;
 @property (weak, nonatomic) IBOutlet UILabel *blueValueLabel;
-@property (strong, nonatomic) NSMutableDictionary *currentColor;
-- (IBAction)saveThisColor:(id)sender;
-
 @property (strong, nonatomic) NSMutableDictionary *selectionPatchs;
 - (void)selectionPatchChnage:(UISwitch *)sender;
+@property (strong, nonatomic) NSMutableDictionary *currentColor;
 
-// Core data
+// for saving data
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
+- (IBAction)saveThisColor:(id)sender;
 
-// For saving color
+// for saving color
 @property (weak, nonatomic) IBOutlet UICollectionView *savedColorCollectionView;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+
+// for bluetooth
+@property (strong, nonatomic) CBCentralManager *centralManager;
+@property (strong, nonatomic) CBPeripheral *activePeripheral;
 
 @end
 
@@ -61,6 +72,9 @@
     // setup for core data
     MainAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
     self.managedObjectContext = appDelegate.managedObjectContext;
+    
+    // setup for bluetooth
+    self.centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
 }
 
 - (void)didReceiveMemoryWarning
@@ -251,6 +265,113 @@
             [collectionView deleteItemsAtIndexPaths:@[indexPath]];
             [collectionView insertItemsAtIndexPaths:@[newIndexPath]];
             break;
+    }
+}
+
+#pragma mark - Core Bluetooth
+#pragma mark CBCentralManagerDelegate
+
+- (void)centralManagerDidUpdateState:(CBCentralManager *)central
+{
+    NSLog(@"Central Manager did update state: %@", [central description]);
+    if (central.state != CBCentralManagerStatePoweredOn) {
+        return;
+    }
+    
+    [central scanForPeripheralsWithServices:@[[CBUUID UUIDWithString:@RBL_SERVICE_UUID]] options:nil];
+}
+
+- (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
+{
+    if (self.activePeripheral != peripheral) {
+        self.activePeripheral = peripheral;
+        self.activePeripheral.delegate = self;
+        
+        [central connectPeripheral:peripheral options:@{CBConnectPeripheralOptionNotifyOnNotificationKey: @YES}];
+        [central stopScan];
+    }
+}
+
+- (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral
+{
+    NSLog(@"Connect peripheral: %@, %@", peripheral.name, [peripheral.identifier UUIDString]);
+
+    [peripheral discoverServices:nil];
+}
+
+- (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
+{
+    NSLog(@"Fail to connect peripheral: %@, %@", [peripheral.identifier UUIDString], error);
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"BLE" message:@"Connection failed" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+}
+
+- (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error
+{
+    NSLog(@"Disconnect peripheral: %@, %@", peripheral.name, [peripheral.identifier UUIDString]);
+    
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"BLE" message:@"Disconnect" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+    [alert show];
+    
+    [central scanForPeripheralsWithServices:@[@RBL_SERVICE_UUID] options:nil];
+}
+
+#pragma mark CBPeripheralDelegate
+
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Service discovery was unsuccessful!");
+        return;
+    }
+    
+    NSLog(@"Services of peripheral with UUID : %@ found", [peripheral.identifier UUIDString]);
+    
+    for (CBService *service in peripheral.services) {
+        NSLog(@"Discovered service %@", service);
+        [peripheral discoverCharacteristics:nil forService:service];
+    }
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Characteristic discorvery unsuccessful!");
+        return;
+    }
+    
+    for (CBCharacteristic *characteristic in service.characteristics) {
+        NSLog(@"Discovered characteristic %@", characteristic);
+        
+        UInt8 buf[] = {0x00};
+        NSData *data = [NSData dataWithBytes:buf length:1];
+        [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
+//        [peripheral readValueForCharacteristic:characteristic];
+//        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+    }
+}
+
+
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Characteristic update unsuccessful!");
+        return;
+    }
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateNotificationStateForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Error changing notification state: %@", [error localizedDescription]);
+    }
+}
+
+- (void)peripheral:(CBPeripheral *)peripheral didWriteValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error
+{
+    if (error) {
+        NSLog(@"Error writing characteristic value: %@", [error localizedDescription]);
     }
 }
 
