@@ -11,6 +11,7 @@
 #import "Patch.h"
 #import "MainAppDelegate.h"
 #import "ModelsName.h"
+#import "LedEffectDefinition.h"
 
 #import <CoreData/CoreData.h>
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -51,6 +52,9 @@
 // for bluetooth
 @property (strong, nonatomic) CBCentralManager *centralManager;
 @property (strong, nonatomic) CBPeripheral *activePeripheral;
+
+// for led effect by bluetooth
+- (void)changeSingleLed:(int)led red:(int)red green:(int)green blue:(int)blue;
 
 @end
 
@@ -105,7 +109,7 @@
         static NSString *PatchIdentifier = @"PatchView";
         
         PatchCollectionViewCell *patchCell = [collectionView dequeueReusableCellWithReuseIdentifier:PatchIdentifier forIndexPath:indexPath];
-        patchCell.number = @(indexPath.item + 1);
+        patchCell.number = @(indexPath.item);
         [patchCell.controlSwitch addTarget:self action:@selector(selectionPatchChnage:) forControlEvents:UIControlEventValueChanged];
         
         cell = patchCell;
@@ -144,24 +148,17 @@
 - (void)colorPickerDidChangeSelection:(RSColorPickerView *)cp
 {
     PatchCollectionViewCell *cell = nil;
-
-    // for display color
     UIColor *currentColor = [cp selectionColor];
-    self.patchView.backgroundColor = currentColor;
-    for (NSNumber *patch in self.selectionPatchs.allKeys) {
-        cell = self.selectionPatchs[patch];
-        cell.colorView.backgroundColor = currentColor;
-    }
     
-    // for template current rgb value
+    // current rgb float value
     CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 1.0;
     [currentColor getRed:&red green:&green blue:&blue alpha:&alpha];
+    // convert rgb float to int value
+    int r = red * 255;
+    int g = green * 255;
+    int b = blue * 255;
     
-    int r = (int)(red * 255.0);
-    int g = (int)(green * 255.0);
-    int b = (int)(blue * 255.0);
-    
-    // temporal cuurent color
+    // saving cuurent color for temporal
     self.currentColor[kRed] = @(r);
     self.currentColor[kGreen] = @(g);
     self.currentColor[kBlue] = @(b);
@@ -170,6 +167,16 @@
     self.redValueLabel.text = [NSString stringWithFormat:@"%d", r];
     self.greenValueLabel.text = [NSString stringWithFormat:@"%d", g];
     self.blueValueLabel.text = [NSString stringWithFormat:@"%d", b];
+    
+    // for display color
+    self.patchView.backgroundColor = currentColor;
+    for (NSNumber *patch in self.selectionPatchs.allKeys) {
+        cell = self.selectionPatchs[patch];
+        cell.colorView.backgroundColor = currentColor;
+        
+        // send color by ble
+        [self changeSingleLed:patch.intValue red:r green:g blue:b];
+    }
 }
 
 - (IBAction)saveThisColor:(id)sender
@@ -344,11 +351,9 @@
     for (CBCharacteristic *characteristic in service.characteristics) {
         NSLog(@"Discovered characteristic %@", characteristic);
         
-        UInt8 buf[] = {0x00};
-        NSData *data = [NSData dataWithBytes:buf length:1];
-        [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
-//        [peripheral readValueForCharacteristic:characteristic];
-//        [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+//        UInt8 buf[] = {0x00};
+//        NSData *data = [NSData dataWithBytes:buf length:1];
+//        [peripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
     }
 }
 
@@ -373,6 +378,70 @@
     if (error) {
         NSLog(@"Error writing characteristic value: %@", [error localizedDescription]);
     }
+}
+
+#pragma mark - Control led effect
+
+- (CBCharacteristic *)findCharacteristicOfLedEffect
+{
+    CBService *service = [self findServiceOfLedEffect];
+
+    if (!service) {
+        NSLog(@"Find service unsuccessful!");
+        return nil;
+    }
+    
+    for (CBCharacteristic *characteristic in service.characteristics) {
+        if ([[characteristic.UUID UUIDString] isEqualToString:@RBL_CHAR_RX_UUID]) {
+            return characteristic;
+        }
+    }
+    
+    return nil;
+}
+
+- (CBService *)findServiceOfLedEffect
+{
+    for (CBService *service in self.activePeripheral.services) {
+        if ([[service.UUID UUIDString] isEqualToString:@RBL_SERVICE_UUID]) {
+            return service;
+        }
+    }
+    
+    return nil;
+}
+
+- (void)reset
+{
+    UInt8 buf[] = {kInit};
+    NSData *data = [NSData dataWithBytes:buf length:1];
+    
+    [self sendLedDataByBLE:data];
+}
+
+- (void)changeSingleLed:(int)led red:(int)red green:(int)green blue:(int)blue
+{
+    UInt8 buf[] = {kChangeSingleLedColor, 0x00, 0x00, 0x00, 0x00};
+    buf[1] = led;
+    buf[2] = red;
+    buf[3] = green;
+    buf[4] = blue;
+
+    NSData *data = [NSData dataWithBytes:buf length:5];
+    
+    [self sendLedDataByBLE:data];
+}
+
+- (void)sendLedDataByBLE:(NSData *)data
+{
+    CBCharacteristic *characteristic = [self findCharacteristicOfLedEffect];
+    
+    if (!characteristic) {
+        NSLog(@"Find characteristic unsuccessful!");
+        return;
+    }
+    
+    [self.activePeripheral writeValue:data forCharacteristic:characteristic type:CBCharacteristicWriteWithoutResponse];
 }
 
 @end

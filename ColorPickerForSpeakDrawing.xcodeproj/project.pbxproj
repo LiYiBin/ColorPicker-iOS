@@ -27,6 +27,7 @@
 		86B7B34C194B5A99000BFC44 /* ModelsName.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B34B194B5A99000BFC44 /* ModelsName.m */; };
 		86B7B353194BEEE4000BFC44 /* Patch.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B352194BEEE4000BFC44 /* Patch.m */; };
 		86B7B35D194C0CE1000BFC44 /* CoreBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B7B35C194C0CE1000BFC44 /* CoreBluetooth.framework */; };
+		86B7B360194C5F28000BFC44 /* LedEffectDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 86B7B35F194C5F28000BFC44 /* LedEffectDefinition.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,8 @@
 		86B7B351194BEEE4000BFC44 /* Patch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Patch.h; sourceTree = "<group>"; };
 		86B7B352194BEEE4000BFC44 /* Patch.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Patch.m; sourceTree = "<group>"; };
 		86B7B35C194C0CE1000BFC44 /* CoreBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreBluetooth.framework; path = System/Library/Frameworks/CoreBluetooth.framework; sourceTree = SDKROOT; };
+		86B7B35E194C5F28000BFC44 /* LedEffectDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LedEffectDefinition.h; sourceTree = "<group>"; };
+		86B7B35F194C5F28000BFC44 /* LedEffectDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LedEffectDefinition.m; sourceTree = "<group>"; };
 		B293DEFE96FF4222ADAB2827 /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
 		F73E9F91406A4E48ADCBA32F /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -200,6 +203,8 @@
 			children = (
 				86B7B34A194B5A99000BFC44 /* ModelsName.h */,
 				86B7B34B194B5A99000BFC44 /* ModelsName.m */,
+				86B7B35E194C5F28000BFC44 /* LedEffectDefinition.h */,
+				86B7B35F194C5F28000BFC44 /* LedEffectDefinition.m */,
 			);
 			name = Tools;
 			sourceTree = "<group>";
@@ -340,6 +345,7 @@
 				86B7B34C194B5A99000BFC44 /* ModelsName.m in Sources */,
 				86B7B289194B2F10000BFC44 /* main.m in Sources */,
 				86B7B293194B2F10000BFC44 /* MainViewController.m in Sources */,
+				86B7B360194C5F28000BFC44 /* LedEffectDefinition.m in Sources */,
 				86B7B345194B5778000BFC44 /* DB.xcdatamodeld in Sources */,
 				86B7B353194BEEE4000BFC44 /* Patch.m in Sources */,
 				86B7B28D194B2F10000BFC44 /* MainAppDelegate.m in Sources */,
@@ -474,6 +480,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ColorPickerForSpeakDrawing/ColorPickerForSpeakDrawing-Prefix.pch";
 				INFOPLIST_FILE = "ColorPickerForSpeakDrawing/ColorPickerForSpeakDrawing-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -488,6 +495,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ColorPickerForSpeakDrawing/ColorPickerForSpeakDrawing-Prefix.pch";
 				INFOPLIST_FILE = "ColorPickerForSpeakDrawing/ColorPickerForSpeakDrawing-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
