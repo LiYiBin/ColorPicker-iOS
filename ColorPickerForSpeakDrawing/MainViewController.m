@@ -17,14 +17,14 @@
 #import <CoreBluetooth/CoreBluetooth.h>
 #import <RSColorPickerView.h>
 
-#define kRed @"Red"
-#define kGreen @"Green"
-#define kBlue @"Blue"
-
 #define RBL_SERVICE_UUID "713D0000-503E-4C75-BA94-3148F18D941E"
 #define RBL_CHAR_TX_UUID "713D0002-503E-4C75-BA94-3148F18D941E"
 #define RBL_CHAR_RX_UUID "713D0003-503E-4C75-BA94-3148F18D941E"
 #define RBL_BLE_FRAMEWORK_VER 0x0200
+
+#define kRed @"red"
+#define kGreen @"green"
+#define kBlue @"blue"
 
 @interface MainViewController () <RSColorPickerViewDelegate, UICollectionViewDataSource, UICollectionViewDelegate, NSFetchedResultsControllerDelegate, CBCentralManagerDelegate, CBPeripheralDelegate>
 
@@ -39,7 +39,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *blueValueLabel;
 @property (strong, nonatomic) NSMutableDictionary *selectionPatchs;
 - (void)selectionPatchChnage:(UISwitch *)sender;
-@property (strong, nonatomic) NSMutableDictionary *currentColor;
 
 // for saving data
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -54,7 +53,7 @@
 @property (strong, nonatomic) CBPeripheral *activePeripheral;
 
 // for led effect by bluetooth
-- (void)changeSingleLed:(int)led red:(int)red green:(int)green blue:(int)blue;
+- (void)sendSingleLedColorByBLE:(int)led red:(int)red green:(int)green blue:(int)blue;
 
 @end
 
@@ -71,7 +70,6 @@
     
     // setup for saving selection patches
     self.selectionPatchs = [[NSMutableDictionary alloc] init];
-    self.currentColor = [NSMutableDictionary dictionaryWithObjects:@[@255, @255, @255] forKeys:@[kRed, kGreen, kBlue]];
     
     // setup for core data
     MainAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -132,6 +130,24 @@
     return cell;
 }
 
+#pragma mark UICollectionViewDelegate
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (collectionView == self.savedColorCollectionView) {
+        NSManagedObject *patch = [self.fetchedResultsController objectAtIndexPath:indexPath];
+        CGFloat r = [[patch valueForKey:PATCH_COLOR_RED] floatValue];
+        CGFloat g = [[patch valueForKey:PATCH_COLOR_GREEN] floatValue];
+        CGFloat b = [[patch valueForKey:PATCH_COLOR_BLUE] floatValue];
+        
+        UIColor *color = [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
+        
+        [self changeColor:color];
+    }
+}
+
+#pragma mark - Color picker
+
 - (void)selectionPatchChnage:(UISwitch *)sender
 {
     PatchCollectionViewCell *cell = (PatchCollectionViewCell *)[[sender superview] superview];
@@ -143,25 +159,25 @@
     }
 }
 
-#pragma mark - RSColorPickerViewDelegate
-
-- (void)colorPickerDidChangeSelection:(RSColorPickerView *)cp
+- (NSDictionary *)parseRGB:(UIColor *)color
 {
-    PatchCollectionViewCell *cell = nil;
-    UIColor *currentColor = [cp selectionColor];
-    
     // current rgb float value
     CGFloat red = 0.0, green = 0.0, blue = 0.0, alpha = 1.0;
-    [currentColor getRed:&red green:&green blue:&blue alpha:&alpha];
+    [color getRed:&red green:&green blue:&blue alpha:&alpha];
     // convert rgb float to int value
     int r = red * 255;
     int g = green * 255;
     int b = blue * 255;
     
-    // saving cuurent color for temporal
-    self.currentColor[kRed] = @(r);
-    self.currentColor[kGreen] = @(g);
-    self.currentColor[kBlue] = @(b);
+    return @{kRed: @(r), kGreen: @(g), kBlue: @(b)};
+}
+
+- (void)changeColor:(UIColor *)color
+{
+    NSDictionary *rgb = [self parseRGB:color];
+    int r = [rgb[kRed] intValue];
+    int g = [rgb[kGreen] intValue];
+    int b = [rgb[kBlue] intValue];
     
     // display rgb value
     self.redValueLabel.text = [NSString stringWithFormat:@"%d", r];
@@ -169,24 +185,34 @@
     self.blueValueLabel.text = [NSString stringWithFormat:@"%d", b];
     
     // for display color
-    self.patchView.backgroundColor = currentColor;
+    self.patchView.backgroundColor = color;
+    PatchCollectionViewCell *cell = nil;
     for (NSNumber *patch in self.selectionPatchs.allKeys) {
         cell = self.selectionPatchs[patch];
-        cell.colorView.backgroundColor = currentColor;
+        cell.colorView.backgroundColor = color;
         
-        // send color by ble
-        [self changeSingleLed:patch.intValue red:r green:g blue:b];
+        // send led color data
+        [self sendSingleLedColorByBLE:patch.intValue red:r green:g blue:b];
     }
+}
+
+#pragma mark RSColorPickerViewDelegate
+
+- (void)colorPickerDidChangeSelection:(RSColorPickerView *)cp
+{
+    [self changeColor:cp.selectionColor];
 }
 
 - (IBAction)saveThisColor:(id)sender
 {
     NSManagedObjectContext *context = self.managedObjectContext;
     
+    NSDictionary *rgb = [self parseRGB:self.patchView.backgroundColor];
+    
     NSManagedObject *patch = [NSEntityDescription insertNewObjectForEntityForName:PATCH inManagedObjectContext:context];
-    [patch setValue:self.currentColor[kRed] forKey:PATCH_COLOR_RED];
-    [patch setValue:self.currentColor[kGreen] forKey:PATCH_COLOR_GREEN];
-    [patch setValue:self.currentColor[kBlue] forKey:PATCH_COLOR_BLUE];
+    [patch setValue:rgb[kRed] forKey:PATCH_COLOR_RED];
+    [patch setValue:rgb[kGreen] forKey:PATCH_COLOR_GREEN];
+    [patch setValue:rgb[kBlue] forKey:PATCH_COLOR_BLUE];
     
     NSError *error;
     if (![context save:&error]) {
@@ -422,7 +448,7 @@
     [self sendLedDataByBLE:data];
 }
 
-- (void)changeSingleLed:(int)led red:(int)red green:(int)green blue:(int)blue
+- (void)sendSingleLedColorByBLE:(int)led red:(int)red green:(int)green blue:(int)blue
 {
     UInt8 buf[] = {kChangeSingleLedColor, 0x00, 0x00, 0x00, 0x00};
     buf[1] = led;
