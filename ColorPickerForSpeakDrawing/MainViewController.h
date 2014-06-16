@@ -10,4 +10,8 @@
 
 @interface MainViewController : UIViewController
 
+
+// for led effect by bluetooth
+- (void)sendSingleLedColorByBLE:(int)led red:(int)red green:(int)green blue:(int)blue;
+
 @end

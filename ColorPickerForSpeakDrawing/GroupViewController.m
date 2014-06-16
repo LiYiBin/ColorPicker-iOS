@@ -10,7 +10,9 @@
 #import "MainAppDelegate.h"
 #import "ModelsName.h"
 #import "GroupTableViewCell.h"
+#import "Group.h"
 #import "Color.h"
+#import "MainViewController.h"
 
 #import <CoreData/CoreData.h>
 
@@ -84,7 +86,7 @@
         CGFloat b = [color.blue floatValue];
         
         UIColor *currentColor = [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
-        NSString *currentColorRGB = [NSString stringWithFormat:@"Red: %.0f Green: %.0f Blue: %.0f", r, g, b];
+        NSString *currentColorRGB = [NSString stringWithFormat:@"RGB: %.0f, %.0f, %.0f", r, g, b];
         switch ([color.index intValue]) {
             case 0:
                 cell.color1View.backgroundColor = currentColor;
@@ -144,6 +146,16 @@
 
 
 #pragma mark UITableViewDelegate
+
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    MainViewController *viewController = [self.tabBarController viewControllers][0];
+    Group *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    for (Color *color in group.colors) {
+        [viewController sendSingleLedColorByBLE:color.index.intValue red:color.red.intValue green:color.green.intValue blue:color.blue.intValue];
+    }
+}
 
 #pragma mark - core data
 

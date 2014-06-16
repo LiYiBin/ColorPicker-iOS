@@ -55,8 +55,7 @@
 @property (strong, nonatomic) CBCentralManager *centralManager;
 @property (strong, nonatomic) CBPeripheral *activePeripheral;
 
-// for led effect by bluetooth
-- (void)sendSingleLedColorByBLE:(int)led red:(int)red green:(int)green blue:(int)blue;
+- (void)changeColor:(UIColor *)color;
 
 @end
 
