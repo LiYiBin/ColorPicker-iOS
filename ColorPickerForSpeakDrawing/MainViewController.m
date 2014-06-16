@@ -78,7 +78,7 @@
     self.managedObjectContext = appDelegate.managedObjectContext;
     
     // setup for bluetooth
-    self.centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:nil];
+    self.centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil options:@{CBConnectPeripheralOptionNotifyOnNotificationKey: @YES}];
 }
 
 - (void)didReceiveMemoryWarning
@@ -290,6 +290,7 @@
 
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI
 {
+    NSLog(@"Dicovered peripheral: %@", peripheral.identifier);
     if (self.activePeripheral != peripheral) {
         self.activePeripheral = peripheral;
         self.activePeripheral.delegate = self;
@@ -321,7 +322,9 @@
     UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"BLE" message:@"Disconnect" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
     [alert show];
     
-    [central scanForPeripheralsWithServices:@[@RBL_SERVICE_UUID] options:nil];
+    self.activePeripheral = nil;
+    [central scanForPeripheralsWithServices:nil options:nil];
+    [central retrievePeripheralsWithIdentifiers:@[peripheral.identifier]];
 }
 
 #pragma mark CBPeripheralDelegate
