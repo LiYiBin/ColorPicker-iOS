@@ -1,28 +1,28 @@
 //
-//  SavedColorViewController.m
+//  GroupViewController.m
 //  ColorPickerForSpeakDrawing
 //
 //  Created by YiBin on 2014/6/16.
 //  Copyright (c) 2014年 YB. All rights reserved.
 //
 
-#import "SavedColorViewController.h"
-#import "SavedColorTableViewCell.h"
+#import "GroupViewController.h"
 #import "MainAppDelegate.h"
 #import "ModelsName.h"
+#import "GroupTableViewCell.h"
+#import "Color.h"
 
 #import <CoreData/CoreData.h>
 
-@interface SavedColorViewController () <UITableViewDataSource, NSFetchedResultsControllerDelegate>
+@interface GroupViewController () <UITableViewDataSource, UITableViewDelegate, NSFetchedResultsControllerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 
 @end
 
-@implementation SavedColorViewController
+@implementation GroupViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -69,22 +69,81 @@
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    static NSString *Identifier = @"SavedColorTableViewCell";
+    static NSString *Identifier = @"GroupColorCell";
     
-    SavedColorTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:Identifier forIndexPath:indexPath];
+    GroupTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:Identifier forIndexPath:indexPath];
+    
+    NSManagedObject *group = [self.fetchedResultsController objectAtIndexPath:indexPath];
+    
+    NSSet *colors = [group valueForKey:kGroupColors];
 
-    NSManagedObject *color = [self.fetchedResultsController objectAtIndexPath:indexPath];
-    float r = [[color valueForKey:kPATCH_COLOR_RED] floatValue];
-    float g = [[color valueForKey:kPATCH_COLOR_GREEN] floatValue];
-    float b = [[color valueForKey:kPATCH_COLOR_BLUE] floatValue];
-    
-    cell.redLabel.text = [NSString stringWithFormat:@"%0.f", r];
-    cell.greenLabel.text = [NSString stringWithFormat:@"%0.f", g];
-    cell.blueLabel.text = [NSString stringWithFormat:@"%0.f", b];
-    cell.colorView.backgroundColor = [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
+    for (Color *color in colors) {
+        
+        CGFloat r = [color.red floatValue];
+        CGFloat g = [color.green floatValue];
+        CGFloat b = [color.blue floatValue];
+        
+        UIColor *currentColor = [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
+        NSString *currentColorRGB = [NSString stringWithFormat:@"Red: %.0f Green: %.0f Blue: %.0f", r, g, b];
+        switch ([color.index intValue]) {
+            case 0:
+                cell.color1View.backgroundColor = currentColor;
+                cell.color1Label.text = currentColorRGB;
+                break;
+            case 1:
+                cell.color2View.backgroundColor = currentColor;
+                cell.color2Label.text = currentColorRGB;
+                break;
+            case 2:
+                cell.color3View.backgroundColor = currentColor;
+                cell.color3Label.text = currentColorRGB;
+                break;
+            case 3:
+                cell.color4View.backgroundColor = currentColor;
+                cell.color4Label.text = currentColorRGB;
+                break;
+            case 4:
+                cell.color5View.backgroundColor = currentColor;
+                cell.color5Label.text = currentColorRGB;
+                break;
+            case 5:
+                cell.color6View.backgroundColor = currentColor;
+                cell.color6Label.text = currentColorRGB;
+                break;
+            case 6:
+                cell.color7View.backgroundColor = currentColor;
+                cell.color7Label.text = currentColorRGB;
+                break;
+            case 7:
+                cell.color8View.backgroundColor = currentColor;
+                cell.color8Label.text = currentColorRGB;
+                break;
+            case 8:
+                cell.color9View.backgroundColor = currentColor;
+                cell.color9Label.text = currentColorRGB;
+                break;
+            case 9:
+                cell.color10View.backgroundColor = currentColor;
+                cell.color10Label.text = currentColorRGB;
+                break;
+            case 10:
+                cell.color11View.backgroundColor = currentColor;
+                cell.color11Label.text = currentColorRGB;
+                break;
+            case 11:
+                cell.color12View.backgroundColor = currentColor;
+                cell.color12Label.text = currentColorRGB;
+                break;
+            default:
+                break;
+        }
+    }
     
     return cell;
 }
+
+
+#pragma mark UITableViewDelegate
 
 #pragma mark - core data
 
@@ -96,21 +155,21 @@
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:kPATCH inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:kGroup inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:kPATCH_COLOR_RED ascending:NO];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:kGroupName ascending:NO];
     NSArray *sortDescriptors = @[sortDescriptor];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
     
     // Edit the section name key path and cache name if appropriate.
     // nil for section name key path means "no sections".
-    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"SAVED_COLOR"];
+    NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest managedObjectContext:self.managedObjectContext sectionNameKeyPath:nil cacheName:@"Group"];
     aFetchedResultsController.delegate = self;
     self.fetchedResultsController = aFetchedResultsController;
     

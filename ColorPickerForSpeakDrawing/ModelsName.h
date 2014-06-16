@@ -10,9 +10,19 @@
 
 @interface ModelsName : NSObject
 
-#define PATCH @"Patch"
-#define PATCH_COLOR_RED @"colorRed"
-#define PATCH_COLOR_GREEN @"colorGreen"
-#define PATCH_COLOR_BLUE @"colorBlue"
+#define kPATCH @"Patch"
+#define kPATCH_COLOR_RED @"colorRed"
+#define kPATCH_COLOR_GREEN @"colorGreen"
+#define kPATCH_COLOR_BLUE @"colorBlue"
+
+#define kGroup @"Group"
+#define kGroupName @"name"
+#define kGroupColors @"colors"
+
+#define kColor @"Color"
+#define kColorRed @"red"
+#define kColorGreen @"green"
+#define kColorBlue @"blue"
+#define kIndex @"index"
 
 @end

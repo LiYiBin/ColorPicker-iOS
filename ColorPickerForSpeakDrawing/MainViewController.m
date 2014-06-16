@@ -12,6 +12,8 @@
 #import "MainAppDelegate.h"
 #import "ModelsName.h"
 #import "LedEffectDefinition.h"
+#import "Group.h"
+#import "Color.h"
 
 #import <CoreData/CoreData.h>
 #import <CoreBluetooth/CoreBluetooth.h>
@@ -43,6 +45,7 @@
 // for saving data
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 - (IBAction)saveThisColor:(id)sender;
+- (IBAction)saveAllColor:(id)sender;
 
 // for saving color
 @property (weak, nonatomic) IBOutlet UICollectionView *savedColorCollectionView;
@@ -118,9 +121,9 @@
         UICollectionViewCell *colorCell = [collectionView dequeueReusableCellWithReuseIdentifier:SavedColorIdentifier forIndexPath:indexPath];
         
         NSManagedObject *patch = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        NSNumber *red = [patch valueForKey:PATCH_COLOR_RED];
-        NSNumber *green = [patch valueForKey:PATCH_COLOR_GREEN];
-        NSNumber *blue = [patch valueForKey:PATCH_COLOR_BLUE];
+        NSNumber *red = [patch valueForKey:kPATCH_COLOR_RED];
+        NSNumber *green = [patch valueForKey:kPATCH_COLOR_GREEN];
+        NSNumber *blue = [patch valueForKey:kPATCH_COLOR_BLUE];
         
         colorCell.backgroundColor = [UIColor colorWithRed:red.intValue/255.0 green:green.intValue/255.0 blue:blue.intValue/255.0 alpha:1.0];
         
@@ -136,9 +139,9 @@
 {
     if (collectionView == self.savedColorCollectionView) {
         NSManagedObject *patch = [self.fetchedResultsController objectAtIndexPath:indexPath];
-        CGFloat r = [[patch valueForKey:PATCH_COLOR_RED] floatValue];
-        CGFloat g = [[patch valueForKey:PATCH_COLOR_GREEN] floatValue];
-        CGFloat b = [[patch valueForKey:PATCH_COLOR_BLUE] floatValue];
+        CGFloat r = [[patch valueForKey:kPATCH_COLOR_RED] floatValue];
+        CGFloat g = [[patch valueForKey:kPATCH_COLOR_GREEN] floatValue];
+        CGFloat b = [[patch valueForKey:kPATCH_COLOR_BLUE] floatValue];
         
         UIColor *color = [UIColor colorWithRed:r/255.0 green:g/255.0 blue:b/255.0 alpha:1.0];
         
@@ -209,11 +212,39 @@
     
     NSDictionary *rgb = [self parseRGB:self.patchView.backgroundColor];
     
-    NSManagedObject *patch = [NSEntityDescription insertNewObjectForEntityForName:PATCH inManagedObjectContext:context];
-    [patch setValue:rgb[kRed] forKey:PATCH_COLOR_RED];
-    [patch setValue:rgb[kGreen] forKey:PATCH_COLOR_GREEN];
-    [patch setValue:rgb[kBlue] forKey:PATCH_COLOR_BLUE];
+    NSManagedObject *patch = [NSEntityDescription insertNewObjectForEntityForName:kPATCH inManagedObjectContext:context];
+    [patch setValue:rgb[kRed] forKey:kPATCH_COLOR_RED];
+    [patch setValue:rgb[kGreen] forKey:kPATCH_COLOR_GREEN];
+    [patch setValue:rgb[kBlue] forKey:kPATCH_COLOR_BLUE];
     
+    NSError *error;
+    if (![context save:&error]) {
+        // Replace this implementation with code to handle the error appropriately.
+        // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+        NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
+        abort();
+    }
+}
+
+- (IBAction)saveAllColor:(id)sender
+{
+    NSManagedObjectContext *context = self.managedObjectContext;
+    
+    Group *group = [NSEntityDescription insertNewObjectForEntityForName:kGroup inManagedObjectContext:context];
+   
+    for (int i = 0; i < 12; i++) {
+        PatchCollectionViewCell *cell = (PatchCollectionViewCell *)[self.patchCollectionView cellForItemAtIndexPath:[NSIndexPath indexPathForItem:i inSection:0]];
+        NSDictionary *rgb = [self parseRGB:cell.colorView.backgroundColor];
+        
+        Color *color = [NSEntityDescription insertNewObjectForEntityForName:kColor inManagedObjectContext:context];
+        color.red = rgb[kRed];
+        color.green = rgb[kGreen];
+        color.blue = rgb[kBlue];
+        color.index = @(i);
+        
+        [group addColorsObject:color];
+    }
+
     NSError *error;
     if (![context save:&error]) {
         // Replace this implementation with code to handle the error appropriately.
@@ -233,14 +264,14 @@
     
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
     // Edit the entity name as appropriate.
-    NSEntityDescription *entity = [NSEntityDescription entityForName:PATCH inManagedObjectContext:self.managedObjectContext];
+    NSEntityDescription *entity = [NSEntityDescription entityForName:kPATCH inManagedObjectContext:self.managedObjectContext];
     [fetchRequest setEntity:entity];
     
     // Set the batch size to a suitable number.
     [fetchRequest setFetchBatchSize:20];
     
     // Edit the sort key as appropriate.
-    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:PATCH_COLOR_RED ascending:NO];
+    NSSortDescriptor *sortDescriptor = [[NSSortDescriptor alloc] initWithKey:kPATCH_COLOR_RED ascending:NO];
     NSArray *sortDescriptors = @[sortDescriptor];
     
     [fetchRequest setSortDescriptors:sortDescriptors];
