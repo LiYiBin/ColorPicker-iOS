@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		34F358989350484EAB896BB7 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F73E9F91406A4E48ADCBA32F /* libPods.a */; };
+		866FC49B194EDDE300043F28 /* SavedColorViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 866FC49A194EDDE300043F28 /* SavedColorViewController.m */; };
+		866FC49E194EDE9D00043F28 /* SavedColorTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 866FC49D194EDE9D00043F28 /* SavedColorTableViewCell.m */; };
 		86B7B27D194B2F10000BFC44 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B7B27C194B2F10000BFC44 /* Foundation.framework */; };
 		86B7B27F194B2F10000BFC44 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B7B27E194B2F10000BFC44 /* CoreGraphics.framework */; };
 		86B7B281194B2F10000BFC44 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86B7B280194B2F10000BFC44 /* UIKit.framework */; };
@@ -41,6 +43,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		866FC499194EDDE300043F28 /* SavedColorViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedColorViewController.h; sourceTree = "<group>"; };
+		866FC49A194EDDE300043F28 /* SavedColorViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SavedColorViewController.m; sourceTree = "<group>"; };
+		866FC49C194EDE9D00043F28 /* SavedColorTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SavedColorTableViewCell.h; sourceTree = "<group>"; };
+		866FC49D194EDE9D00043F28 /* SavedColorTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SavedColorTableViewCell.m; sourceTree = "<group>"; };
 		86B7B279194B2F10000BFC44 /* ColorPickerForSpeakDrawing.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorPickerForSpeakDrawing.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		86B7B27C194B2F10000BFC44 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		86B7B27E194B2F10000BFC44 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -141,6 +147,8 @@
 				86B7B28E194B2F10000BFC44 /* Main.storyboard */,
 				86B7B291194B2F10000BFC44 /* MainViewController.h */,
 				86B7B292194B2F10000BFC44 /* MainViewController.m */,
+				866FC499194EDDE300043F28 /* SavedColorViewController.h */,
+				866FC49A194EDDE300043F28 /* SavedColorViewController.m */,
 				86B7B2B4194B4078000BFC44 /* Views */,
 				86B7B349194B5926000BFC44 /* Models */,
 				86B7B34D194B5AA7000BFC44 /* Tools */,
@@ -185,6 +193,8 @@
 			children = (
 				86B7B2B1194B4073000BFC44 /* PatchCollectionViewCell.h */,
 				86B7B2B2194B4073000BFC44 /* PatchCollectionViewCell.m */,
+				866FC49C194EDE9D00043F28 /* SavedColorTableViewCell.h */,
+				866FC49D194EDE9D00043F28 /* SavedColorTableViewCell.m */,
 			);
 			name = Views;
 			sourceTree = "<group>";
@@ -345,10 +355,12 @@
 				86B7B34C194B5A99000BFC44 /* ModelsName.m in Sources */,
 				86B7B289194B2F10000BFC44 /* main.m in Sources */,
 				86B7B293194B2F10000BFC44 /* MainViewController.m in Sources */,
+				866FC49E194EDE9D00043F28 /* SavedColorTableViewCell.m in Sources */,
 				86B7B360194C5F28000BFC44 /* LedEffectDefinition.m in Sources */,
 				86B7B345194B5778000BFC44 /* DB.xcdatamodeld in Sources */,
 				86B7B353194BEEE4000BFC44 /* Patch.m in Sources */,
 				86B7B28D194B2F10000BFC44 /* MainAppDelegate.m in Sources */,
+				866FC49B194EDDE300043F28 /* SavedColorViewController.m in Sources */,
 				86B7B2B3194B4073000BFC44 /* PatchCollectionViewCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
