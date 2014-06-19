@@ -46,6 +46,7 @@
 @property (strong, nonatomic) NSManagedObjectContext *managedObjectContext;
 - (IBAction)saveThisColor:(id)sender;
 - (IBAction)saveAllColor:(id)sender;
+- (IBAction)closeAllLeds:(id)sender;
 
 // for saving color
 @property (weak, nonatomic) IBOutlet UICollectionView *savedColorCollectionView;
@@ -470,10 +471,10 @@
     return nil;
 }
 
-- (void)reset
+- (IBAction)closeAllLeds:(id)sender
 {
-    UInt8 buf[] = {kInit};
-    NSData *data = [NSData dataWithBytes:buf length:1];
+    UInt8 buf[] = {kInit, 0x00, 0x00, 0x00, 0x00};
+    NSData *data = [NSData dataWithBytes:buf length:5];
     
     [self sendLedDataByBLE:data];
 }
